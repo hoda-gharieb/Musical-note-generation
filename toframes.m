@@ -1,0 +1,16 @@
+function frames=toframes(input,curpos,segmentlen,wintype)
+len=length(input);
+numFrames=length(curpos);
+frames=zeros(numFrames,segmentlen);
+start=curpos-round(segmentlen/2);
+offset=(0:segmentlen-1);
+index_start=find(start<1); % find out those frames beyond the first point
+start(index_start)=1; % for those, just use the first frame
+endpos=start+segmentlen-1;
+index=find(endpos>len);
+endpos(index)=len; % duplicate the last several frames if window is over the limit.
+start(index)=len+1-segmentlen;
+frames(:)=input(start(:,ones(1,segmentlen))+offset(ones(numFrames,1),:));
+[nf, len]=size(frames);
+win=window(segmentlen,wintype);
+frames = frames .* win(ones(nf,1),:);
